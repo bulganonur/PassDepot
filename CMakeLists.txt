@@ -18,6 +18,7 @@ include(CMake/CompilerWarnings.cmake)
 # Include Directories
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Include/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/ImGui/Include/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/GLFW/Include/)
 
 # Set project options
 if(NOT CMAKE_BUILD_TYPE)
@@ -37,6 +38,9 @@ if(${PROJECT_NAME}_VERBOSE_OUTPUT)
     verbose_message("* ${source}")
   endforeach()
 endif()
+
+# Create executable
+add_executable(${PROJECT_NAME} ${exe_sources})
 
 # Set output directories
 set_target_properties(
@@ -58,8 +62,7 @@ endif()
 set_project_warnings(${PROJECT_NAME})
 verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}.\n")
 
-# Create executable
-add_executable(${PROJECT_NAME} ${exe_sources})
+
 
 #
 # Link with the libraries the project uses
@@ -68,9 +71,11 @@ add_executable(${PROJECT_NAME} ${exe_sources})
 # target_link_libraries -> Specify libraries to use when linking a given target
 # include_directories -> Add the given directories to those the compiler (probably preprocessor) uses to search for include files.
 
-# # GLFW
-# include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/GLFW/include/)
-# target_link_libraries(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/libs/GLFW/lib-vc2022/glfw3.lib)
+# GLFW
+target_link_libraries(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/External/GLFW/lib-vc2022/glfw3.lib)
+
+# OpenGL
+target_link_libraries(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/External/OpenGL/Lib/OpenGL32.lib)
 
 # # GLM
 # include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/glm/include/)

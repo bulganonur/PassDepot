@@ -1,3 +1,9 @@
+# build folder
+[Bb]uild/*
+
+### VisualStudioCode ###
+.vscode/*
+
 # Prerequisites
 *.d
 
@@ -30,3 +36,7 @@
 *.exe
 *.out
 *.app
+
+# Binary
+*.ilk
+*.pdb
