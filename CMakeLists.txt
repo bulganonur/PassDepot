@@ -9,7 +9,7 @@ project(
 
 set(CMAKE_CXX_STANDARD 20)
 
-# Include
+# Include CMake files
 include(CMake/StandardSettings.cmake)
 include(CMake/Utils.cmake)
 include(CMake/SourcesAndHeaders.cmake)
@@ -19,6 +19,8 @@ include(CMake/CompilerWarnings.cmake)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Include/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/ImGui/Include/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/GLFW/Include/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/LibSodium/Include/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/sqlite3/Include/)
 
 # Set project options
 if(NOT CMAKE_BUILD_TYPE)
@@ -50,19 +52,17 @@ set_target_properties(
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
   # RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}"
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-)
-message(STATUS "Added all header and implementation files.\n")
-
-# Set the project standard and warnings
-if(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
+  )
+  message(STATUS "Added all header and implementation files.\n")
+  
+  # Set the project standard and warnings
+  if(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
   target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
-else()
+  else()
   target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
-endif()
-set_project_warnings(${PROJECT_NAME})
-verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}.\n")
-
-
+  endif()
+  set_project_warnings(${PROJECT_NAME})
+  verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}.\n")
 
 #
 # Link with the libraries the project uses
@@ -77,9 +77,16 @@ target_link_libraries(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/External/GLFW/
 # OpenGL
 target_link_libraries(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/External/OpenGL/Lib/OpenGL32.lib)
 
+# LibSodium
+target_link_libraries(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/External/LibSodium/Lib/libsodium.lib)
+
+# sqlite3
+target_link_libraries(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/External/sqlite3/Lib/sqlite3.lib)
+
+
 # # GLM
 # include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/glm/include/)
 
-verbose_message("Successfully added all dependencies and linked against them.")
+verbose_message("Successfully added all dependencies and linked against them.\n")
 
 message(STATUS "Finished building requirements for installing the package.\n")
