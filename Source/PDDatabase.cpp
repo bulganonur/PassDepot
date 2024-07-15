@@ -1,4 +1,5 @@
 #include "PDDatabase.h"
+#include "PDGUI.h"
 
 #include <sqlite3.h>
 
@@ -56,7 +57,7 @@ void PDDatabase::InitDatabaseWithTables()
         "Id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
         "Username TEXT NOT NULL, "
         "Password TEXT NOT NULL, "
-        "Notes TEXT, "
+        "Notes TEXT NOT NULL, "
         "UserId INTEGER NOT NULL, "
         "FOREIGN KEY(UserId) REFERENCES User(Id) ON DELETE RESTRICT);";
 
@@ -73,17 +74,18 @@ void PDDatabase::InitDatabaseWithTables()
     }
 }
 
-void PDDatabase::InsertData(const std::string &Username, const std::string &MasterPassword)
+void PDDatabase::InsertDataUserTable(const std::string &Username, const std::string &MasterPassword)
 {
     sqlite3_stmt* SqlStatement;
-    const char* SqlInsert = "INSERT INTO User (Username, MasterPassword) VALUES (?, ?);";
+    const std::string SqlInsert = "INSERT INTO User (Username, MasterPassword) VALUES (?, ?);";
 
     // Prepare the SQL statement
-    ReturnCode = sqlite3_prepare_v2(SqliteDatabase, SqlInsert, -1, &SqlStatement, nullptr);
+    ReturnCode = sqlite3_prepare_v2(SqliteDatabase, SqlInsert.c_str(), -1, &SqlStatement, nullptr);
     if (ReturnCode != SQLITE_OK)
     {
         std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(SqliteDatabase) << std::endl;
         // @todo(Error Handling): ---
+        sqlite3_finalize(SqlStatement);
         return;
     }
     
@@ -97,6 +99,8 @@ void PDDatabase::InsertData(const std::string &Username, const std::string &Mast
     {
         std::cerr << "Execution failed: " << sqlite3_errmsg(SqliteDatabase) << std::endl;
         // @todo(Error Handling): ---
+        sqlite3_finalize(SqlStatement);
+        return;
     }
     else
     {
@@ -107,7 +111,47 @@ void PDDatabase::InsertData(const std::string &Username, const std::string &Mast
     sqlite3_finalize(SqlStatement);
 }
 
-void PDDatabase::ShowDepot()
+void PDDatabase::InsertDataDepotTable(const std::string &Username, const std::string &Password, const std::string &Notes, const int UserId)
+{
+    sqlite3_stmt* SqlStatement;
+    const std::string SqlInsert = "INSERT INTO Depot (Username, Password, Notes, UserId) VALUES (?, ?, ?, ?);";
+
+    // Prepare the SQL statement
+    ReturnCode = sqlite3_prepare_v2(SqliteDatabase, SqlInsert.c_str(), -1, &SqlStatement, nullptr);
+    if (ReturnCode != SQLITE_OK)
+    {
+        std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(SqliteDatabase) << std::endl;
+        // @todo(Error Handling): ---
+        sqlite3_finalize(SqlStatement);
+        return;
+    }
+    
+    // Bind the variables to the SQL statement
+    sqlite3_bind_text(SqlStatement, 1, Username.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(SqlStatement, 2, Password.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(SqlStatement, 3, Notes.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_int(SqlStatement, 4, UserId);
+
+    
+    // Execute the statement
+    ReturnCode = sqlite3_step(SqlStatement);
+    if (ReturnCode != SQLITE_DONE)
+    {
+        std::cerr << "Execution failed: " << sqlite3_errmsg(SqliteDatabase) << std::endl;
+        // @todo(Error Handling): ---
+        sqlite3_finalize(SqlStatement);
+        return;
+    }
+    else
+    {
+        std::cout << "Record inserted successfully" << std::endl;
+    }
+    
+    // Finalize the statement to release resources
+    sqlite3_finalize(SqlStatement);
+}
+
+void PDDatabase::LoadDepot()
 {
     // Read data from the table
     const char* SqlSelect = "SELECT * FROM User;";
@@ -135,6 +179,88 @@ void PDDatabase::ShowDepot()
     {
         std::cout << "Operation done successfully" << std::endl;
     }
+}
+
+bool PDDatabase::IsUsernameUnique(const std::string& Username)
+{
+    sqlite3_stmt* SqlStatement;
+    const std::string SqlSelect = "SELECT Username FROM User WHERE Username = ?;";
+
+    // Prepare the SQL statement
+    ReturnCode = sqlite3_prepare_v2(SqliteDatabase, SqlSelect.c_str(), -1, &SqlStatement, nullptr);
+    if (ReturnCode != SQLITE_OK)
+    {
+        std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(SqliteDatabase) << std::endl;
+        // @todo(Error Handling): ---
+        sqlite3_finalize(SqlStatement);
+        return false;
+    }
+
+    sqlite3_bind_text(SqlStatement, 1, Username.c_str(), -1, SQLITE_STATIC);
+
+    // Execute and process the results, return false if Username already exists
+    if ((ReturnCode = sqlite3_step(SqlStatement)) == SQLITE_ROW)
+    {
+        sqlite3_finalize(SqlStatement);
+        return false;
+    }
+
+    if (ReturnCode != SQLITE_DONE)
+    {
+        std::cerr << "Execution failed: " << sqlite3_errmsg(SqliteDatabase) << std::endl;
+        // @todo(Error Handling): ---
+        sqlite3_finalize(SqlStatement);
+        return false;
+    }
+
+    sqlite3_finalize(SqlStatement);
+    return true;
+}
+
+bool PDDatabase::Authenticate(const std::string &Username, const std::string &MasterPassword)
+{
+    sqlite3_stmt* SqlStatement;
+    const std::string SqlSelect = "SELECT MasterPassword FROM User WHERE Username = ?;";
+
+    // Prepare the SQL statement
+    ReturnCode = sqlite3_prepare_v2(SqliteDatabase, SqlSelect.c_str(), -1, &SqlStatement, nullptr);
+    if (ReturnCode != SQLITE_OK)
+    {
+        std::cerr << "Failed to prepare statement: " << sqlite3_errmsg(SqliteDatabase) << std::endl;
+        // @todo(Error Handling): ---
+        sqlite3_finalize(SqlStatement);
+        return false;
+    }
+
+    sqlite3_bind_text(SqlStatement, 1, Username.c_str(), -1, SQLITE_STATIC);
+
+    // Execute and process the results, return true if autentication is successful
+    if ((ReturnCode = sqlite3_step(SqlStatement)) == SQLITE_ROW)
+    {
+        const unsigned char* ColumnValue = sqlite3_column_text(SqlStatement, 0);
+        if (strcmp(MasterPassword.c_str(), (char*)ColumnValue) == 0)
+        {
+            sqlite3_finalize(SqlStatement);
+            return true;
+        }
+        else
+        {
+            sqlite3_finalize(SqlStatement);
+            return false;
+        }
+        
+    }
+
+    if (ReturnCode != SQLITE_DONE)
+    {
+        std::cerr << "Execution failed: " << sqlite3_errmsg(SqliteDatabase) << std::endl;
+        // @todo(Error Handling): ---
+        sqlite3_finalize(SqlStatement);
+        return false;
+    }
+
+    sqlite3_finalize(SqlStatement);
+    return false;
 }
 
 } // namespace PassDepot

@@ -5,11 +5,12 @@
 #include <imgui_impl_opengl3.h>
 #include <GLFW/glfw3.h>
 
+#include <stdio.h>
 
 namespace PassDepot
 {
     
-PDGUI::PDGUI(GLFWwindow* Window) : bLoggedIn(false), bShowDepot(false), ClearColor{ImVec4(0.45f, 0.55f, 0.60f, 1.00f)}
+PDGUI::PDGUI(GLFWwindow* Window) : bLoggedIn(false), bShowDepot(false), bShowStatusWindow(false), ClearColor{ImVec4(0.45f, 0.55f, 0.60f, 1.00f)}
 {
     Init(Window);
 }
@@ -43,6 +44,27 @@ void PDGUI::Init(GLFWwindow* Window)
     ImGui_ImplOpenGL3_Init();
 }
 
+void PDGUI::SetStatusMessage(const std::string &InStatusMessage)
+{
+    StatusMessage = InStatusMessage;
+    bShowStatusWindow = true;
+}
+
+void PDGUI::StatusWindow()
+{
+    if (bShowStatusWindow)
+    {
+        // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+        ImGui::Begin("Message", &bShowStatusWindow);
+        ImGui::TextWrapped(StatusMessage.c_str());
+        if (ImGui::Button("Close"))
+        {
+            bShowStatusWindow = false;
+        }
+        ImGui::End();
+    }
+}
+
 void PDGUI::StartNewFrame()
 {
     // Start the Dear ImGui frame
@@ -68,59 +90,59 @@ void PDGUI::Render(GLFWwindow *Window)
 void PDGUI::DemoDemo()
 {
     // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        if (bShowDemoWindow)
+    if (bShowDemoWindow)
+    {
+        ImGui::ShowDemoWindow(&bShowDemoWindow);
+    }
+
+    // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
+    {
+        static float f = 0.0f;
+        static int Counter = 0;
+
+        // Create a window called "Hello, world!" and append into it.
+        ImGui::Begin("Hello, world!");
+
+        // Display some text (you can use a format strings too)
+        ImGui::Text("This is some useful text.");
+
+        // Edit bools storing our window open/close state
+        ImGui::Checkbox("Demo Window", &bShowDemoWindow);
+        ImGui::Checkbox("Another Window", &bShowAnotherWindow);
+
+        // Edit 1 float using a slider from 0.0f to 1.0f
+        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+
+        // Edit 3 floats representing a color
+        ImGui::ColorEdit3("clear color", (float*)&ClearColor);
+
+        // Buttons return true when clicked (most widgets return true when edited/activated)
+        if (ImGui::Button("Button"))
         {
-            ImGui::ShowDemoWindow(&bShowDemoWindow);
+            Counter++;
         }
+        ImGui::SameLine();
+        ImGui::Text("Counter = %d", Counter);
 
-        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::End();
+    }
+
+    // 3. Show another simple window.
+    if (bShowAnotherWindow)
+    {
+        // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+        ImGui::Begin("Another Window", &bShowAnotherWindow);
+        ImGui::Text("Hello from another window!");
+        if (ImGui::Button("Close Me"))
         {
-            static float f = 0.0f;
-            static int Counter = 0;
-
-            // Create a window called "Hello, world!" and append into it.
-            ImGui::Begin("Hello, world!");
-
-            // Display some text (you can use a format strings too)
-            ImGui::Text("This is some useful text.");
-
-            // Edit bools storing our window open/close state
-            ImGui::Checkbox("Demo Window", &bShowDemoWindow);
-            ImGui::Checkbox("Another Window", &bShowAnotherWindow);
-
-            // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-
-            // Edit 3 floats representing a color
-            ImGui::ColorEdit3("clear color", (float*)&ClearColor);
-
-            // Buttons return true when clicked (most widgets return true when edited/activated)
-            if (ImGui::Button("Button"))
-            {
-                Counter++;
-            }
-            ImGui::SameLine();
-            ImGui::Text("Counter = %d", Counter);
-
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-            ImGui::End();
+            bShowAnotherWindow = false;
         }
-
-        // 3. Show another simple window.
-        if (bShowAnotherWindow)
-        {
-            // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-            ImGui::Begin("Another Window", &bShowAnotherWindow);
-            ImGui::Text("Hello from another window!");
-            if (ImGui::Button("Close Me"))
-            {
-                bShowAnotherWindow = false;
-            }
-            ImGui::End();
-        }
+        ImGui::End();
+    }
 }
 
-void PDGUI::Welcome()
+void PDGUI::Welcome(PDDatabase* Database)
 {
     if (!bLoggedIn)
     {    
@@ -128,7 +150,6 @@ void PDGUI::Welcome()
 
         ImGui::Text("Login or Register to PassDepot");
 
-        
         static char Username[32] = "";
         ImGui::InputTextWithHint("##", "Username", Username, IM_ARRAYSIZE(Username));
         
@@ -138,15 +159,22 @@ void PDGUI::Welcome()
         // Login Authentication
         if (ImGui::Button("Login"))
         {
-            if (strcmp(MasterPassword, "hello") == 0)
+            if (strlen(Username) <= 0 || strlen(MasterPassword) <= 0)
             {
-                ImGui::Text("YES");
-                bLoggedIn = true;
-                bShowDepot = true;
+                SetStatusMessage("Must Provide a Username and a Password");
+                ImGui::End();
+                return;
+            }
+
+            if (!Database->Authenticate(Username, MasterPassword))
+            {
+                SetStatusMessage("Wrong Username or Password");
             }
             else
             {
-                ImGui::Text("NO");
+                bShowStatusWindow = false;
+                bLoggedIn = true;
+                bShowDepot = true;
             }
         }
 
@@ -155,22 +183,27 @@ void PDGUI::Welcome()
         // Register new user
         if (ImGui::Button("Register"))
         {
-            if (strlen(Username) <= 0)
+            if (strlen(Username) <= 0 || strlen(MasterPassword) <= 0)
             {
-                ImGui::Text("Invalid Username");
-                
+                SetStatusMessage("Must Provide a Username and a Password");
+                ImGui::End();
+                return;
+            }
+
+            if (!Database->IsUsernameUnique(Username))
+            {
+                SetStatusMessage("Invalid Username");
             }
             else
             {
-                // register to database
-            }
-            
-            
+                // Register to database
+                Database->InsertDataUserTable(Username, MasterPassword);
 
-            ImGui::Text("YES");
-            bLoggedIn = true;
-            bShowDepot = true;
-            
+                SetStatusMessage("Registered Successfully");
+
+                bLoggedIn = true;
+                bShowDepot = true;
+            }
         }
         ImGui::End();   
     }
@@ -180,15 +213,20 @@ void PDGUI::Depot()
 {
     if (bShowDepot)
     {
-        ImGui::SetNextWindowSize(ImVec2(800, 800), ImGuiCond_FirstUseEver);
-        if (ImGui::Begin("Example: Simple layout", nullptr, ImGuiWindowFlags_MenuBar))
+        ImGui::SetNextWindowSize(ImVec2(800, 400), ImGuiCond_FirstUseEver);
+        if (ImGui::Begin("PassDepot", nullptr, ImGuiWindowFlags_MenuBar))
         {
             
             if (ImGui::BeginMenuBar())
             {
                 if (ImGui::BeginMenu("File"))
                 {
-                    if (ImGui::MenuItem("Close", "Ctrl+W")) { bShowDepot = false; }
+                    if (ImGui::MenuItem("Close", "Ctrl+W"))
+                    { 
+                        bShowDepot = false;
+                        bLoggedIn = false;
+                    }
+                    
                     ImGui::EndMenu();
                 }
                 ImGui::EndMenuBar();
@@ -204,7 +242,9 @@ void PDGUI::Depot()
                     char label[128];
                     sprintf_s(label, "MyObject %d", i);
                     if (ImGui::Selectable(label, selected == i))
+                    {
                         selected = i;
+                    }
                 }
                 ImGui::EndChild();
             }
@@ -218,14 +258,19 @@ void PDGUI::Depot()
                 ImGui::Separator();
                 if (ImGui::BeginTabBar("##Tabs", ImGuiTabBarFlags_None))
                 {
-                    if (ImGui::BeginTabItem("Description"))
+                    if (ImGui::BeginTabItem("Username"))
                     {
-                        ImGui::TextWrapped("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
+                        ImGui::TextWrapped("xyz@xyz.com");
                         ImGui::EndTabItem();
                     }
-                    if (ImGui::BeginTabItem("Details"))
+                    if (ImGui::BeginTabItem("Password"))
                     {
-                        ImGui::Text("ID: 0123456789");
+                        ImGui::Text("0123456789");
+                        ImGui::EndTabItem();
+                    }
+                    if (ImGui::BeginTabItem("Notes"))
+                    {
+                        ImGui::TextWrapped("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
                         ImGui::EndTabItem();
                     }
                     ImGui::EndTabBar();

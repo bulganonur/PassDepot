@@ -29,8 +29,9 @@ void PassDepot::Run()
 
         GUI.StartNewFrame();
 
-        GUI.DemoDemo();
-        GUI.Welcome();
+        // GUI.DemoDemo();
+        GUI.StatusWindow();
+        GUI.Welcome(&Database);
         GUI.Depot();
 
         GUI.Render(Window.GetGLFWWindow());
