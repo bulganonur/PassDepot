@@ -32,7 +32,7 @@ void PassDepot::Run()
         // GUI.DemoDemo();
         GUI.StatusWindow();
         GUI.Welcome(&Database);
-        GUI.Depot();
+        GUI.Depot(&Database);
 
         GUI.Render(Window.GetGLFWWindow());
     }

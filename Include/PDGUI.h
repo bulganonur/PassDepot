@@ -11,6 +11,22 @@ namespace PassDepot
 
 class PDDatabase;
 
+enum WelcomeOperations
+{
+	WO_Register, 
+	WO_Login, 
+	WO_Default
+};
+
+enum DepotOperations
+{
+	DO_NewEntry, 
+	DO_EditEntry, 
+	DO_DeleteEntry, 
+	DO_NOOP, 
+	DO_Default
+};
+
 /**
  * GUI Manager that handles Dear Imgui elements 
  */
@@ -33,7 +49,7 @@ public:
 
 	// Returns true if login/register is successful
 	void Welcome(PDDatabase* Database);
-	void Depot();
+	void Depot(PDDatabase* Database);
 
 	// @todo(debugcode): remove
 	void DemoDemo();
@@ -48,29 +64,25 @@ private:
 
 	void Init(GLFWwindow* Window);
 	void SetStatusMessage(const std::string& InStatusMessage);
-
+	void AddNewEntry(PDDatabase* Database);
+	void EditEntry(PDDatabase* Database);
+	void DeleteEntry(PDDatabase* Database);
+	void Login(PDDatabase* Database);
+	void Register(PDDatabase* Database);
+	
 	bool bLoggedIn;
 	bool bShowDepot;
 	bool bShowStatusWindow;
 	std::string StatusMessage;
     ImVec4 ClearColor;
 	
+	int DepotOperation;
+	int WelcomeOperation;
+
 	// @todo(debugcode): remove
     bool bShowDemoWindow = true;
     bool bShowAnotherWindow = false;
 
-	
-	/**
-	 * bLoggedIn = false;
-	 * if db found and not empty
-	 * 		while (!Login())
-	 * 			;
-	 * 		PasswordStorageScreen();
-	 * else
-	 * 		Register();
-	 * 		PasswordStorageScreen();
-	 * 
-	 */
 };
 
 	

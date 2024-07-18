@@ -10,7 +10,9 @@
 namespace PassDepot
 {
     
-PDGUI::PDGUI(GLFWwindow* Window) : bLoggedIn(false), bShowDepot(false), bShowStatusWindow(false), ClearColor{ImVec4(0.45f, 0.55f, 0.60f, 1.00f)}
+PDGUI::PDGUI(GLFWwindow* Window)
+: bLoggedIn(false), bShowDepot(false), bShowStatusWindow(false), ClearColor{ImVec4(0.45f, 0.55f, 0.60f, 1.00f)}, 
+  DepotOperation(DO_Default), WelcomeOperation(WO_Default)
 {
     Init(Window);
 }
@@ -50,13 +52,205 @@ void PDGUI::SetStatusMessage(const std::string &InStatusMessage)
     bShowStatusWindow = true;
 }
 
+void PDGUI::AddNewEntry(PDDatabase* Database)
+{
+    static char Title[64] = "";
+    ImGui::InputTextWithHint("Title", "Title", Title, IM_ARRAYSIZE(Title));
+    
+    static char Username[64] = "";
+    ImGui::InputTextWithHint("Username", "Username", Username, IM_ARRAYSIZE(Username));
+
+    static char Password[64] = "";
+    ImGui::InputTextWithHint("Password", "Password", Password, IM_ARRAYSIZE(Password));
+
+    static char Notes[256] = "";
+    ImGui::InputTextWithHint("Notes", "Notes", Notes, IM_ARRAYSIZE(Notes));
+
+    if (ImGui::Button("Save New Entry", ImVec2(200.0f, 50.0f)))
+    {
+        Database->InsertDataDepotTable(Title, Username, Password, Notes);
+        Database->LoadDepot();
+        SetStatusMessage("Entry Recorded Successfully");
+
+        strncpy_s(Title, "", sizeof(Title));
+        strncpy_s(Username, "", sizeof(Username));
+        strncpy_s(Password, "", sizeof(Password));
+        strncpy_s(Notes, "", sizeof(Notes));
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Clear", ImVec2(200.0f, 50.0f)))
+    {
+        strncpy_s(Title, "", sizeof(Title));
+        strncpy_s(Username, "", sizeof(Username));
+        strncpy_s(Password, "", sizeof(Password));
+        strncpy_s(Notes, "", sizeof(Notes));
+    }
+}
+
+void PDGUI::EditEntry(PDDatabase *Database)
+{
+    static int EntryId;
+    ImGui::InputInt("EntryId", &EntryId);
+
+    static char Title[64] = "";
+    ImGui::InputTextWithHint("Title", "Title", Title, IM_ARRAYSIZE(Title));
+    
+    static char Username[64] = "";
+    ImGui::InputTextWithHint("Username", "Username", Username, IM_ARRAYSIZE(Username));
+
+    static char Password[64] = "";
+    ImGui::InputTextWithHint("Password", "Password", Password, IM_ARRAYSIZE(Password));
+
+    static char Notes[256] = "";
+    ImGui::InputTextWithHint("Notes", "Notes", Notes, IM_ARRAYSIZE(Notes));
+
+    if (ImGui::Button("Save Changes", ImVec2(200.0f, 50.0f)))
+    {
+        if (!Database->DoesEntryExists(EntryId))
+        {
+            SetStatusMessage("No Such Entry, Enter a Valid EntryId");
+        }
+        else
+        {
+            Database->UpdateDataDepotTable(EntryId, Title, Username, Password, Notes);
+            Database->LoadDepot();
+            SetStatusMessage("Entry Recorded Successfully");
+
+            EntryId = 0;
+            strncpy_s(Title, "", sizeof(Title));
+            strncpy_s(Username, "", sizeof(Username));
+            strncpy_s(Password, "", sizeof(Password));
+            strncpy_s(Notes, "", sizeof(Notes));
+        }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Fill in Details", ImVec2(200.0f, 50.0f)))
+    {
+        if (!Database->DoesEntryExists(EntryId))
+        {
+            SetStatusMessage("No Such Entry, Enter a Valid EntryId");
+        }
+        else
+        {
+            DepotEntry Entry = Database->GetEntry(EntryId);
+            
+            strncpy_s(Title, Entry.Title.c_str(), sizeof(Title));
+            strncpy_s(Username, Entry.Username.c_str(), sizeof(Username));
+            strncpy_s(Password, Entry.Password.c_str(), sizeof(Password));
+            strncpy_s(Notes, Entry.Notes.c_str(), sizeof(Notes));
+        }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Clear", ImVec2(200.0f, 50.0f)))
+    {
+        EntryId = 0;
+        strncpy_s(Title, "", sizeof(Title));
+        strncpy_s(Username, "", sizeof(Username));
+        strncpy_s(Password, "", sizeof(Password));
+        strncpy_s(Notes, "", sizeof(Notes));
+    }
+}
+
+void PDGUI::DeleteEntry(PDDatabase *Database)
+{
+    static int EntryId;
+    ImGui::InputInt("EntryId", &EntryId);
+
+    if (ImGui::Button("Delete Entry", ImVec2(200.0f, 50.0f)))
+    {
+        if (!Database->DoesEntryExists(EntryId))
+        {
+            SetStatusMessage("No Such Entry, Enter a Valid EntryId");
+        }
+        else
+        {
+            Database->DeleteDataDepotTable(EntryId);
+            Database->LoadDepot();
+            SetStatusMessage("Entry Deleted Successfully");
+        }
+    }
+}
+
+void PDGUI::Login(PDDatabase *Database)
+{
+    static char Username[32] = "";
+    ImGui::InputTextWithHint("##", "Username", Username, IM_ARRAYSIZE(Username));
+    
+    static char MasterPassword[128] = "";
+    ImGui::InputTextWithHint("###", "MasterPassword", MasterPassword, IM_ARRAYSIZE(MasterPassword), ImGuiInputTextFlags_Password);
+    
+    // Login Authentication
+    if (ImGui::Button("LOGIN"))
+    {
+        if (strlen(Username) <= 0 || strlen(MasterPassword) <= 0)
+        {
+            SetStatusMessage("Must Provide a Username and a Password");
+        }
+        else if (!Database->Authenticate(Username, MasterPassword))
+        {
+            SetStatusMessage("Wrong Username or Password");
+        }
+        else
+        {
+            Database->SetUserId(Username);
+            Database->LoadDepot();
+            bShowStatusWindow = false;
+            bLoggedIn = true;
+            bShowDepot = true;
+        }
+    }
+}
+
+void PDGUI::Register(PDDatabase *Database)
+{
+    static char Username[32] = "";
+    ImGui::InputTextWithHint("##", "Username", Username, IM_ARRAYSIZE(Username));
+    
+    static char MasterPassword[128] = "";
+    ImGui::InputTextWithHint("###", "MasterPassword", MasterPassword, IM_ARRAYSIZE(MasterPassword), ImGuiInputTextFlags_Password);
+
+    static char MasterPassVerify[128] = "";
+    ImGui::InputTextWithHint(" ", "Re-enter MasterPassword", MasterPassVerify, IM_ARRAYSIZE(MasterPassVerify), ImGuiInputTextFlags_Password);
+
+    if (ImGui::Button("REGISTER"))
+    {
+        if (strlen(Username) <= 0 || strlen(MasterPassword) <= 0)
+        {
+            SetStatusMessage("Must Provide a Username and a Password");
+        }
+        else if (strcmp(MasterPassword, MasterPassVerify) != 0)
+        {
+            SetStatusMessage("Passwords Do Not Match");
+        }
+        else if (Database->DoesUsernameExists(Username))
+        {
+            SetStatusMessage("Invalid Username");
+        }
+        else
+        {
+            // Register to database
+            Database->InsertDataUserTable(Username, MasterPassword);
+            Database->SetUserId(Username);
+            Database->LoadDepot();
+
+            SetStatusMessage("Registered Successfully");
+
+            bLoggedIn = true;
+            bShowDepot = true;
+        }
+    }
+}
+
 void PDGUI::StatusWindow()
 {
+    // @todo: Implement "ShowStatusMesseges?" functionality
+
     if (bShowStatusWindow)
     {
         // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
         ImGui::Begin("Message", &bShowStatusWindow);
         ImGui::TextWrapped(StatusMessage.c_str());
+        ImGui::Spacing();
         if (ImGui::Button("Close"))
         {
             bShowStatusWindow = false;
@@ -147,146 +341,122 @@ void PDGUI::Welcome(PDDatabase* Database)
     if (!bLoggedIn)
     {    
         ImGui::Begin("Welcome");
+        ImGui::Text("Login or Register to PassDepot: ");
+        ImGui::Spacing();
 
-        ImGui::Text("Login or Register to PassDepot");
-
-        static char Username[32] = "";
-        ImGui::InputTextWithHint("##", "Username", Username, IM_ARRAYSIZE(Username));
-        
-        static char MasterPassword[128] = "";
-        ImGui::InputTextWithHint("###", "MasterPassword", MasterPassword, IM_ARRAYSIZE(MasterPassword), ImGuiInputTextFlags_Password);
-        
-        // Login Authentication
-        if (ImGui::Button("Login"))
-        {
-            if (strlen(Username) <= 0 || strlen(MasterPassword) <= 0)
-            {
-                SetStatusMessage("Must Provide a Username and a Password");
-                ImGui::End();
-                return;
-            }
-
-            if (!Database->Authenticate(Username, MasterPassword))
-            {
-                SetStatusMessage("Wrong Username or Password");
-            }
-            else
-            {
-                bShowStatusWindow = false;
-                bLoggedIn = true;
-                bShowDepot = true;
-            }
-        }
-
+        ImGui::RadioButton("Login", &WelcomeOperation, WO_Login);
         ImGui::SameLine();
+        ImGui::RadioButton("Register", &WelcomeOperation, WO_Register);
 
-        // Register new user
-        if (ImGui::Button("Register"))
+        ImGui::NewLine();
+        ImGui::Separator();
+        ImGui::NewLine();
+
+        if (WelcomeOperation == WO_Login)
         {
-            if (strlen(Username) <= 0 || strlen(MasterPassword) <= 0)
-            {
-                SetStatusMessage("Must Provide a Username and a Password");
-                ImGui::End();
-                return;
-            }
-
-            if (!Database->IsUsernameUnique(Username))
-            {
-                SetStatusMessage("Invalid Username");
-            }
-            else
-            {
-                // Register to database
-                Database->InsertDataUserTable(Username, MasterPassword);
-
-                SetStatusMessage("Registered Successfully");
-
-                bLoggedIn = true;
-                bShowDepot = true;
-            }
+            Login(Database);
+        }
+        else if (WelcomeOperation == WO_Register)
+        {
+            Register(Database);
         }
         ImGui::End();   
     }
 }
 
-void PDGUI::Depot()
+void PDGUI::Depot(PDDatabase* Database)
 {
     if (bShowDepot)
     {
-        ImGui::SetNextWindowSize(ImVec2(800, 400), ImGuiCond_FirstUseEver);
-        if (ImGui::Begin("PassDepot", nullptr, ImGuiWindowFlags_MenuBar))
+        if (ImGui::Begin("PassDepot"))
         {
+            // Table flags
+            static ImGuiTableFlags Flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_Hideable | ImGuiTableFlags_Resizable;
             
-            if (ImGui::BeginMenuBar())
+            // Depot Table 
+            if (ImGui::BeginTable("Depot", 5, Flags))
             {
-                if (ImGui::BeginMenu("File"))
+                // Headers
+                ImGui::TableSetupColumn("EntryId");
+                ImGui::TableSetupColumn("Title");
+                ImGui::TableSetupColumn("Username");
+                ImGui::TableSetupColumn("Password");
+                ImGui::TableSetupColumn("Notes");
+                ImGui::TableHeadersRow();
+
+                // Table Contents
+                for (DepotEntry& DepotEntry : *Database->GetDepot())
                 {
-                    if (ImGui::MenuItem("Close", "Ctrl+W"))
-                    { 
-                        bShowDepot = false;
-                        bLoggedIn = false;
-                    }
+                    ImGui::TableNextRow();
+
+                    ImGui::TableSetColumnIndex(0);
+                    std::string EntryId = std::to_string(DepotEntry.EntryId);
+                    ImGui::TextUnformatted(EntryId.c_str());
+
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::TextUnformatted(DepotEntry.Title.c_str());
                     
-                    ImGui::EndMenu();
-                }
-                ImGui::EndMenuBar();
-            }
+                    ImGui::TableSetColumnIndex(2);
+                    ImGui::TextUnformatted(DepotEntry.Username.c_str());
 
-            // Left
-            static int selected = 0;
-            {
-                ImGui::BeginChild("left pane", ImVec2(400, 0), ImGuiChildFlags_Border | ImGuiChildFlags_ResizeX);
-                for (int i = 0; i < 100; i++)
-                {
-                    // FIXME: Good candidate to use ImGuiSelectableFlags_SelectOnNav
-                    char label[128];
-                    sprintf_s(label, "MyObject %d", i);
-                    if (ImGui::Selectable(label, selected == i))
-                    {
-                        selected = i;
-                    }
+                    ImGui::TableSetColumnIndex(3);
+                    ImGui::TextUnformatted(DepotEntry.Password.c_str());
+
+                    ImGui::TableSetColumnIndex(4);
+                    ImGui::TextWrapped(DepotEntry.Notes.c_str());
                 }
-                ImGui::EndChild();
             }
+            ImGui::EndTable();
+
+            ImGui::NewLine();
+            ImGui::Separator();
+            ImGui::NewLine();
+
+            /**
+             * ---------------------------------------------------------------------------------------------------------
+             * New Entry, Edit Entry, Delete Entry
+             * ---------------------------------------------------------------------------------------------------------
+             */
+
+            ImGui::RadioButton("New Entry", &DepotOperation, DO_NewEntry);
             ImGui::SameLine();
+            ImGui::RadioButton("Edit Entry", &DepotOperation, DO_EditEntry);
+            ImGui::SameLine();
+            ImGui::RadioButton("Delete Entry", &DepotOperation, DO_DeleteEntry);
+            ImGui::SameLine();
+            ImGui::RadioButton("Just Depot", &DepotOperation, DO_NOOP);
 
-            // Right
+            ImGui::NewLine();
+
+            if (DepotOperation == DO_NewEntry)
             {
-                ImGui::BeginGroup();
-                ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
-                ImGui::Text("MyObject: %d", selected);
-                ImGui::Separator();
-                if (ImGui::BeginTabBar("##Tabs", ImGuiTabBarFlags_None))
-                {
-                    if (ImGui::BeginTabItem("Username"))
-                    {
-                        ImGui::TextWrapped("xyz@xyz.com");
-                        ImGui::EndTabItem();
-                    }
-                    if (ImGui::BeginTabItem("Password"))
-                    {
-                        ImGui::Text("0123456789");
-                        ImGui::EndTabItem();
-                    }
-                    if (ImGui::BeginTabItem("Notes"))
-                    {
-                        ImGui::TextWrapped("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
-                        ImGui::EndTabItem();
-                    }
-                    ImGui::EndTabBar();
-                }
-                ImGui::EndChild();
-                if (ImGui::Button("Revert")) {}
-                ImGui::SameLine();
-                if (ImGui::Button("Save")) {}
-                ImGui::EndGroup();
+                AddNewEntry(Database);
+            }
+            else if (DepotOperation == DO_EditEntry)
+            {
+                EditEntry(Database);
+            }
+            else if (DepotOperation == DO_DeleteEntry)
+            {
+                DeleteEntry(Database);
+            }
+            else
+            {
+                // NOOP, just Depot table view
+            }
+            
+            ImGui::NewLine();
+            ImGui::Separator();
+            ImGui::NewLine();
+            
+            if (ImGui::Button("Log Out", ImVec2(200.0f, 100.0f)))
+            {
+                bShowDepot = false;
+                bLoggedIn = false;
             }
         }
         ImGui::End();
     }
-    
 }
 
 } // namespace PassDepot
-
-
