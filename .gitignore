@@ -4,6 +4,9 @@
 ### VisualStudioCode ###
 .vscode/*
 
+### VisualStudio ###
+.vs/*
+
 # Prerequisites
 *.d
 
@@ -40,3 +43,16 @@
 # Binary
 *.ilk
 *.pdb
+*.exp
+
+# Database files
+*.db
+
+# Dear Imgui ini file
+imgui.ini
+
+# Notes/Pseudocode
+Notes.md
+
+# Internal use batch files
+ninja.bat

@@ -3,6 +3,7 @@
 #
 
 option(${PROJECT_NAME}_BUILD_EXECUTABLE "Build the project as an executable, rather than a library." ON)
+option(${PROJECT_NAME}_BUILD_GUI "(For Windows) Build the project as a GUI application, without a console in the background." ON)
 option(${PROJECT_NAME}_BUILD_HEADERS_ONLY "Build the project as a header-only library." OFF)
 option(${PROJECT_NAME}_USE_ALT_NAMES "Use alternative names for the project, such as naming the include directory all lowercase." ON)
 
@@ -40,7 +41,6 @@ if(${PROJECT_NAME}_ENABLE_LTO)
   endif()
 endif()
 
-
 option(${PROJECT_NAME}_ENABLE_CCACHE "Enable the usage of Ccache, in order to speed up rebuild times." ON)
 find_program(CCACHE_FOUND ccache)
 if(CCACHE_FOUND)
@@ -48,7 +48,7 @@ if(CCACHE_FOUND)
   set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif()
 
-option(${PROJECT_NAME}_ENABLE_ASAN "Enable Address Sanitize to detect memory error." OFF)
+option(${PROJECT_NAME}_ENABLE_ASAN "Enable Address Sanitize to detect memory error." ON)
 if(${PROJECT_NAME}_ENABLE_ASAN)
     add_compile_options(-fsanitize=address)
     add_link_options(-fsanitize=address)

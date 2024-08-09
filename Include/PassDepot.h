@@ -1,8 +1,9 @@
 #pragma once
 
 #include "PDWindow.h"
-#include "PDGUI.h"
 #include "PDDatabase.h"
+#include "PDSecurity.h"
+#include "PDGUI.h"
 
 namespace PassDepot
 {
@@ -15,6 +16,9 @@ public:
     PassDepot();
     ~PassDepot();
 
+    PassDepot(const PassDepot&) = delete;
+    PassDepot& operator=(const PassDepot&) = delete;
+
 public:
 
     void Run();
@@ -22,8 +26,9 @@ public:
 private:
 
     PDWindow Window;
-    PDGUI GUI;
     PDDatabase Database;
+    PDSecurity Security;
+    PDGUI GUI;
 };
 
 

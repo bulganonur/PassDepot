@@ -17,7 +17,7 @@ include(CMake/CompilerWarnings.cmake)
 
 # Include Directories
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Include/)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/ImGui/Include/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/DearImGui/Include/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/GLFW/Include/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/LibSodium/Include/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/sqlite3/Include/)
@@ -53,16 +53,22 @@ set_target_properties(
   # RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}"
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
   )
-  message(STATUS "Added all header and implementation files.\n")
+
+# On Windows, build a GUI application
+if(WIN32 AND ${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_BUILD_GUI)
+  set_target_properties(PassDepot PROPERTIES WIN32_EXECUTABLE ON)
+endif()
+
+message(STATUS "Added all header and implementation files.\n")
   
-  # Set the project standard and warnings
-  if(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
+# Set the project standard and warnings
+if(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
   target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
-  else()
+else()
   target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
-  endif()
-  set_project_warnings(${PROJECT_NAME})
-  verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}.\n")
+endif()
+set_project_warnings(${PROJECT_NAME})
+verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}.\n")
 
 #
 # Link with the libraries the project uses
@@ -83,9 +89,17 @@ target_link_libraries(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/External/LibSo
 # sqlite3
 target_link_libraries(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/External/sqlite3/Lib/sqlite3.lib)
 
-
-# # GLM
-# include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/glm/include/)
+# For Windows, it is necessary to link with the MultiThreaded library.
+# Depending on how the rest of the project's dependencies are linked, it might be necessary
+# to change the line to statically link with the library.
+#
+# This is done as follows:
+#
+# set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+# set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+#
+# On Linux and Mac this variable is ignored. If any issues rise from it, try commenting it out
+# and letting CMake decide how to link with it.
 
 verbose_message("Successfully added all dependencies and linked against them.\n")
 
