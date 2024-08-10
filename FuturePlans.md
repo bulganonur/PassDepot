@@ -30,7 +30,7 @@
     entries. Title and EntryId should shown as plaintext and the rest can be shown as ciphertext. Also consider 
     performance overhead. With the current setup it may not be possible to decrypt parts of an entry.
 
-4. Encrypt database file ???
+4. Encrypt database file -> [read](https://doc.libsodium.org/secret-key_cryptography/secretstream#file-encryption-example-code)
 
 ### Nice-to-Haves
 
