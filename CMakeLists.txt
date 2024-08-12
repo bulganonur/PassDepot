@@ -1,20 +1,23 @@
 cmake_minimum_required(VERSION 3.28)
 
+set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+
 # Project details
 project(
   PassDepot
   VERSION 0.1.0
   LANGUAGES CXX
 )
-
+  
 set(CMAKE_CXX_STANDARD 20)
-
+  
 # Include CMake files
 include(CMake/StandardSettings.cmake)
 include(CMake/Utils.cmake)
 include(CMake/SourcesAndHeaders.cmake)
 include(CMake/CompilerWarnings.cmake)
-
+include(CMake/Vcpkg.cmake)
+  
 # Include Directories
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Include/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/DearImGui/Include/)
@@ -50,13 +53,13 @@ set_target_properties(
   PROPERTIES
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
-  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}"
-  # RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+  # RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}"
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
   )
 
 # On Windows, build a GUI application
 if(WIN32 AND ${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_BUILD_GUI)
-  set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE ON)
+  set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
 endif()
 
 message(STATUS "Added all header and implementation files.\n")
@@ -74,20 +77,23 @@ verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}
 # Link with the libraries the project uses
 #
 
-# target_link_libraries -> Specify libraries to use when linking a given target
-# include_directories -> Add the given directories to those the compiler (probably preprocessor) uses to search for include files.
-
-# GLFW
-target_link_libraries(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/External/GLFW/lib-vc2022/glfw3.lib)
+# fmt
+find_package(fmt CONFIG REQUIRED)
 
 # OpenGL
-target_link_libraries(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/External/OpenGL/Lib/OpenGL32.lib)
+find_package(OpenGL REQUIRED)
+
+# GLFW
+find_package(glfw3 CONFIG REQUIRED)
 
 # LibSodium
-target_link_libraries(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/External/LibSodium/Lib/libsodium.lib)
+find_package(unofficial-sodium CONFIG REQUIRED)
 
 # sqlite3
-target_link_libraries(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/External/sqlite3/Lib/sqlite3.lib)
+find_package(unofficial-sqlite3 CONFIG REQUIRED)
+
+# Link libraries
+target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt OpenGL::GL glfw unofficial-sodium::sodium unofficial::sqlite3::sqlite3)
 
 # For Windows, it is necessary to link with the MultiThreaded library.
 # Depending on how the rest of the project's dependencies are linked, it might be necessary

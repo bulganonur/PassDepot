@@ -77,6 +77,8 @@ disabled from the OptionsButton(). OptionsButton() also has a section called The
 of the three Dear ImGui themes. Themes are called Classic, Dark and Light. Finally, it has a button called Logout, which 
 only appears if the user is logged in and when clicked, logs user out and takes the flow back to Welcome() window.
 
+For fonts, PDGUI uses [Victor Mono](https://github.com/rubjo/victor-mono).
+
 ### PDDatabase.h
 
 This file contains PDDatabase class, which is a wrapper for SQLite operations. PDDatabase is responsible of creating and 

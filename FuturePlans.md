@@ -36,7 +36,7 @@
 
 - Make table sortable
 - Make theme transparecy adjustable
-- Password generation
+- Password generation -> [read](https://doc.libsodium.org/generating_random_data)
 - Let users create additional tables/depots/vaults and or additional databases.
 - Switch to Dear Imgui's stdlib for C++ stl
 - Libsodium padding? -> [read](https://doc.libsodium.org/padding)

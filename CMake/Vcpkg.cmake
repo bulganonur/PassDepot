@@ -1,0 +1,7 @@
+if(${PROJECT_NAME}_ENABLE_VCPKG)  
+  
+	if(${PROJECT_NAME}_VERBOSE_OUTPUT)
+		set(VCPKG_VERBOSE ON)
+	endif()
+
+endif()
