@@ -5,11 +5,11 @@ option(${PROJECT_NAME}_BUILD_EXECUTABLE "Build the project as an executable, rat
 option(${PROJECT_NAME}_BUILD_GUI "(For Windows) Build the project as a GUI application, without a console in the background." ON)
 option(${PROJECT_NAME}_BUILD_HEADERS_ONLY "Build the project as a header-only library." OFF)
 
-# vcpkg
-option(${PROJECT_NAME}_ENABLE_VCPKG "Enable the Vcpkg package manager for this project." ON)
-
 # Compiler options
 option(${PROJECT_NAME}_WARNINGS_AS_ERRORS "Treat compiler warnings as errors." OFF)
+
+# vcpkg verbose messages
+set(VCPKG_VERBOSE OFF)
 
 #
 # Miscelanious options

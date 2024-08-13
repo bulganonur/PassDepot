@@ -3,7 +3,6 @@
 #include <sqlite3.h>
 
 #include <iostream>
-#include <source_location>
 
 namespace PassDepot
 {
@@ -25,7 +24,7 @@ void PDDatabase::InitDatabaseWithTables()
     ReturnCode = sqlite3_open("depot.db", &SqliteDatabase);
     if (ReturnCode)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         return;
     }
     else
@@ -43,7 +42,8 @@ void PDDatabase::InitDatabaseWithTables()
     ReturnCode = sqlite3_exec(SqliteDatabase, SqlCreateUserTable, nullptr, 0, &ErrorMessage);
     if (ReturnCode != SQLITE_OK)
     {
-        std::cerr << "Err: " << ErrorMessage << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << ErrorMessage << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
+        
         sqlite3_free(ErrorMessage);
     }
     else
@@ -63,7 +63,7 @@ void PDDatabase::InitDatabaseWithTables()
     ReturnCode = sqlite3_exec(SqliteDatabase, SqlCreateDepotTable, nullptr, 0, &ErrorMessage);
     if (ReturnCode != SQLITE_OK)
     {
-        std::cerr << "Err: " << ErrorMessage << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << ErrorMessage << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_free(ErrorMessage);
     }
     else
@@ -81,7 +81,7 @@ void PDDatabase::InsertDataUserTable(const std::string& Username, const std::str
     ReturnCode = sqlite3_prepare_v2(SqliteDatabase, SqlInsert.c_str(), -1, &SqlStatement, nullptr);
     if (ReturnCode != SQLITE_OK)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return;
     }
@@ -95,7 +95,7 @@ void PDDatabase::InsertDataUserTable(const std::string& Username, const std::str
     ReturnCode = sqlite3_step(SqlStatement);
     if (ReturnCode != SQLITE_DONE)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return;
     }
@@ -117,7 +117,7 @@ void PDDatabase::InsertDataDepotTable(const std::string& CipherText, const std::
     ReturnCode = sqlite3_prepare_v2(SqliteDatabase, SqlInsert.c_str(), -1, &SqlStatement, nullptr);
     if (ReturnCode != SQLITE_OK)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return;
     }
@@ -132,7 +132,7 @@ void PDDatabase::InsertDataDepotTable(const std::string& CipherText, const std::
     ReturnCode = sqlite3_step(SqlStatement);
     if (ReturnCode != SQLITE_DONE)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return;
     }
@@ -154,7 +154,7 @@ void PDDatabase::UpdateDataDepotTable(int EntryId, const std::string& CipherText
     ReturnCode = sqlite3_prepare_v2(SqliteDatabase, SqlInsert.c_str(), -1, &SqlStatement, nullptr);
     if (ReturnCode != SQLITE_OK)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return;
     }
@@ -169,7 +169,7 @@ void PDDatabase::UpdateDataDepotTable(int EntryId, const std::string& CipherText
     ReturnCode = sqlite3_step(SqlStatement);
     if (ReturnCode != SQLITE_DONE)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return;
     }
@@ -191,7 +191,7 @@ void PDDatabase::DeleteDataDepotTable(int EntryId)
     ReturnCode = sqlite3_prepare_v2(SqliteDatabase, SqlSelect.c_str(), -1, &SqlStatement, nullptr);
     if (ReturnCode != SQLITE_OK)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return;
     }
@@ -203,7 +203,7 @@ void PDDatabase::DeleteDataDepotTable(int EntryId)
     ReturnCode = sqlite3_step(SqlStatement);
     if (ReturnCode != SQLITE_DONE)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return;
     }
@@ -224,7 +224,7 @@ void PDDatabase::CacheUserId(const std::string &Username)
     ReturnCode = sqlite3_prepare_v2(SqliteDatabase, SqlSelect.c_str(), -1, &SqlStatement, nullptr);
     if (ReturnCode != SQLITE_OK)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return;
     }
@@ -239,7 +239,7 @@ void PDDatabase::CacheUserId(const std::string &Username)
 
     if (ReturnCode != SQLITE_DONE)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return;
     }
@@ -256,7 +256,7 @@ void PDDatabase::LoadDepot()
     ReturnCode = sqlite3_prepare_v2(SqliteDatabase, SqlSelect.c_str(), -1, &SqlStatement, nullptr);
     if (ReturnCode != SQLITE_OK)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return;
     }
@@ -281,7 +281,7 @@ void PDDatabase::LoadDepot()
 
     if (ReturnCode != SQLITE_DONE)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return;
     }
@@ -302,7 +302,7 @@ bool PDDatabase::DoesUsernameExists(const std::string& Username)
     ReturnCode = sqlite3_prepare_v2(SqliteDatabase, SqlSelect.c_str(), -1, &SqlStatement, nullptr);
     if (ReturnCode != SQLITE_OK)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return false;
     }
@@ -318,7 +318,7 @@ bool PDDatabase::DoesUsernameExists(const std::string& Username)
 
     if (ReturnCode != SQLITE_DONE)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return false;
     }
@@ -336,7 +336,7 @@ bool PDDatabase::DoesEntryExists(int EntryId)
     ReturnCode = sqlite3_prepare_v2(SqliteDatabase, SqlSelect.c_str(), -1, &SqlStatement, nullptr);
     if (ReturnCode != SQLITE_OK)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return false;
     }
@@ -353,7 +353,7 @@ bool PDDatabase::DoesEntryExists(int EntryId)
 
     if (ReturnCode != SQLITE_DONE)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return false;
     }
@@ -371,7 +371,7 @@ const std::string PDDatabase::GetHash(const std::string &Username)
     ReturnCode = sqlite3_prepare_v2(SqliteDatabase, SqlSelect.c_str(), -1, &SqlStatement, nullptr);
     if (ReturnCode != SQLITE_OK)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return nullptr;
     }
@@ -389,7 +389,7 @@ const std::string PDDatabase::GetHash(const std::string &Username)
 
     if (ReturnCode != SQLITE_DONE)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return nullptr;
     }
@@ -407,7 +407,7 @@ const std::string PDDatabase::GetSalt(const std::string &Username)
     ReturnCode = sqlite3_prepare_v2(SqliteDatabase, SqlSelect.c_str(), -1, &SqlStatement, nullptr);
     if (ReturnCode != SQLITE_OK)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return std::string();
     }
@@ -425,7 +425,7 @@ const std::string PDDatabase::GetSalt(const std::string &Username)
 
     if (ReturnCode != SQLITE_DONE)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return std::string();
     }
@@ -443,7 +443,7 @@ const std::string PDDatabase::GetNonce(int EntryId)
     ReturnCode = sqlite3_prepare_v2(SqliteDatabase, SqlSelect.c_str(), -1, &SqlStatement, nullptr);
     if (ReturnCode != SQLITE_OK)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return std::string();
     }
@@ -461,7 +461,7 @@ const std::string PDDatabase::GetNonce(int EntryId)
 
     if (ReturnCode != SQLITE_DONE)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return std::string();
     }
@@ -479,7 +479,7 @@ DepotEntry PDDatabase::GetEntry(int EntryId)
     ReturnCode = sqlite3_prepare_v2(SqliteDatabase, SqlSelect.c_str(), -1, &SqlStatement, nullptr);
     if (ReturnCode != SQLITE_OK)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return DepotEntry();
     }
@@ -504,7 +504,7 @@ DepotEntry PDDatabase::GetEntry(int EntryId)
 
     if (ReturnCode != SQLITE_DONE)
     {
-        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << "at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Err: " << sqlite3_errmsg(SqliteDatabase) << " at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
         sqlite3_finalize(SqlStatement);
         return DepotEntry();
     }

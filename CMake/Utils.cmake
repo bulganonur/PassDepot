@@ -7,4 +7,3 @@ function(verbose_message content)
 			message(STATUS ${content})
     endif()
 endfunction()
-

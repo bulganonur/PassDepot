@@ -1,7 +1,6 @@
 #include "PDSecurity.h"
 
 #include <iostream>
-#include <source_location>
 
 namespace PassDepot
 {
@@ -19,7 +18,7 @@ void PDSecurity::Init()
 {
     if (sodium_init() < 0)
     {
-        std::cerr << "Execution failed at: " << std::source_location::current().function_name() << std::endl;
+        std::cerr << "Execution failed at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
     }
 }
 
@@ -31,7 +30,7 @@ std::string PDSecurity::HashPassword(const std::string& Password)
     {
         return OutHash;
     }
-    std::cerr << "Execution failed at: " << std::source_location::current().function_name() << std::endl;
+    std::cerr << "Execution failed at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
     return std::string();
 }
 
@@ -49,7 +48,7 @@ const std::vector<unsigned char> PDSecurity::Encrypt(std::vector<unsigned char>&
     {
         return Nonce;
     }
-    std::cerr << "Execution failed at: " << std::source_location::current().function_name() << std::endl;
+    std::cerr << "Execution failed at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
     return std::vector<unsigned char>();
 }
 
@@ -62,7 +61,7 @@ void PDSecurity::Decrypt(std::vector<unsigned char>& OutPlainText, const std::st
     {
         return;
     }
-    std::cerr << "Execution failed at: " << std::source_location::current().function_name() << std::endl;
+    std::cerr << "Execution failed at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
 }
 
 const std::string PDSecurity::GenerateSalt()
@@ -87,7 +86,7 @@ void PDSecurity::DeriveKey(const std::string& Password, const std::string& InSal
     {
         return;
     }
-    std::cerr << "Execution failed at: " << std::source_location::current().function_name() << std::endl;
+    std::cerr << "Execution failed at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
 }
 
 void PDSecurity::ClearKey()
@@ -118,7 +117,7 @@ const std::vector<unsigned char> PDSecurity::HexToBin(const std::string &Hex)
         OutBin.resize(OutBinLen);
         return OutBin;
     }
-    std::cerr << "Execution failed at: " << std::source_location::current().function_name() << std::endl;
+    std::cerr << "Execution failed at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
     return std::vector<unsigned char>();
 }
 
@@ -128,7 +127,7 @@ void PDSecurity::MemLock(void* MemAddress)
     {
         return;
     }
-    std::cerr << "Execution failed at: " << std::source_location::current().function_name() << std::endl;
+    std::cerr << "Execution failed at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
 }
 
 void PDSecurity::MemUnlock(void* MemAddress)
@@ -137,7 +136,7 @@ void PDSecurity::MemUnlock(void* MemAddress)
     {
         return;
     }
-    std::cerr << "Execution failed at: " << std::source_location::current().function_name() << std::endl;
+    std::cerr << "Execution failed at: " << __FUNCTION__ << " line:" << __LINE__ << std::endl;
 }
 
 } // namespace PassDepot

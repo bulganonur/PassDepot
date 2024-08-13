@@ -5,10 +5,10 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <GLFW/glfw3.h>
+#include <fmt/core.h>
 
 #include <iostream>
 #include <sstream>
-#include <format>
 
 namespace PassDepot
 {
@@ -698,7 +698,7 @@ void PDGUI::DeleteEntry()
         ImGui::Spacing();
 
         // Format text beforehand so its size will be calculated correctly
-        std::string WarningText = std::format("Entry No:{} will be deleted permanently.", EntryId);
+        std::string WarningText = fmt::format("Entry No:{} will be deleted permanently.", EntryId);
         ImGui::TextUnformatted(WarningText.c_str());
 
         ImGui::Spacing();

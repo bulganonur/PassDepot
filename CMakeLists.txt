@@ -16,7 +16,6 @@ include(CMake/StandardSettings.cmake)
 include(CMake/Utils.cmake)
 include(CMake/SourcesAndHeaders.cmake)
 include(CMake/CompilerWarnings.cmake)
-include(CMake/Vcpkg.cmake)
   
 # Include Directories
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Include/)
@@ -55,7 +54,7 @@ set_target_properties(
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
   # RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}"
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-  )
+)
 
 # On Windows, build a GUI application
 if(WIN32 AND ${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_BUILD_GUI)
