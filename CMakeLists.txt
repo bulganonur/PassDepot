@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.25)
 
 set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 
@@ -10,6 +10,7 @@ project(
 )
   
 set(CMAKE_CXX_STANDARD 20)
+set(VCPKG_LIBRARY_LINKAGE static)
   
 # Include CMake files
 include(CMake/StandardSettings.cmake)
@@ -20,9 +21,6 @@ include(CMake/CompilerWarnings.cmake)
 # Include Directories
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Include/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/DearImGui/Include/)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/GLFW/Include/)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/LibSodium/Include/)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/sqlite3/Include/)
 
 # Set project options
 if(NOT CMAKE_BUILD_TYPE)
