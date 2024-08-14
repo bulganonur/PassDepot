@@ -4,10 +4,10 @@
 
 ## Project Description
 
-PassDepot is an offline password manager for desktop platforms (currently only for Windows). Its goal is to give users a 
-simple way to store their private information, in a secure way. It encrypts plaintext into ciphertext and stores it in 
-the local machine. When it comes to secure that database file, the onus is on the user since -as mentioned before- this 
-is an offline password manager.
+PassDepot is an offline password manager for desktop platforms (currently only tested for Windows10 and Debian12). Its 
+goal is to give users a simple way to store their private information, in a secure way. It encrypts plaintext into 
+ciphertext and stores it in the local machine. When it comes to securing that database file, the onus is on the user 
+since -as mentioned before- this is an offline password manager.
 
 PassDepot has a simple GUI which utilizes immediate-mode GUI library, [Dear ImGui](https://github.com/ocornut/imgui). 
 It uses cryptographic tools provided by [libsodium](https://github.com/jedisct1/libsodium). For database operation, 
