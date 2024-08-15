@@ -78,7 +78,7 @@ void PDGUI::Init()
 void PDGUI::SetupStyle()
 {
     // Set startup Dear ImGui theme based on SelectedTheme
-    SetSelectedTheme(EPT_Dark);
+    SetSelectedTheme(EPT_Light);
     SwitchThemes();
 
     ImGuiStyle& Style = ImGui::GetStyle();
@@ -402,6 +402,8 @@ void PDGUI::Welcome()
         {
             Register();
         }
+
+        cs50xOpening();
 
         ResizeHandle();
     }
@@ -784,6 +786,10 @@ void PDGUI::Logout()
     ClearInputFieldsDepot();
     SetWelcomeOperation(EWO_Default);
     SetIsLoggedIn(false);
+
+    bShouldShowcs50x = true;
+    cs50xButtonSize = BigButtonSize;
+    cs50xButtonText = "this was cs50x";
 }
 
 void PDGUI::InputFieldsLogin(float InFieldWidth)
@@ -973,6 +979,44 @@ void PDGUI::AlignElementsX(float InElementWidth, float InAlignment, int InElemen
 
     float IndentSize = (MainViewport->Size.x - ElementWidthTotal) * InAlignment;
     ImGui::SetCursorScreenPos(ImVec2{IndentSize, ImGui::GetCursorScreenPos().y});
+}
+
+void PDGUI::cs50xOpening()
+{
+    if (bShouldShowcs50x)
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_SeparatorTextBorderSize, 5.0f);
+        ImGui::PushStyleColor(ImGuiCol_Separator, cs50xCrimson);
+        ImGui::PushStyleColor(ImGuiCol_Text, cs50xCrimson);
+
+        ImGui::NewLine();
+        ImGui::SeparatorText(" PassDepot ");
+        
+        AlignElementsX(ImGui::CalcTextSize("github: bulganonur").x);
+        ImGui::TextUnformatted("github: bulganonur");
+
+        AlignElementsX(ImGui::CalcTextSize("edx: bulganonur").x);
+        ImGui::TextUnformatted("edx: bulganonur");
+
+        AlignElementsX(ImGui::CalcTextSize("Gaziantep, Turkey").x);
+        ImGui::TextUnformatted("Gaziantep, Turkey");
+
+        AlignElementsX(ImGui::CalcTextSize("August 15, 2024").x);
+        ImGui::TextUnformatted("August 15, 2024");
+        ImGui::PopStyleColor();
+
+        ImGui::Spacing();
+
+        AlignElementsX(cs50xButtonSize.x);
+        if (ImGui::Button(cs50xButtonText.c_str(), cs50xButtonSize))
+        {
+            bShouldShowcs50x = false;
+        }
+
+        ImGui::SeparatorText("");
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar();
+    }
 }
 
 } // namespace PassDepot

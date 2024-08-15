@@ -181,6 +181,17 @@ private:
 	ImGuiWindowFlags MainWindowFlags;
 	ImGuiWindowFlags PopupMessageFlags;
 	ImGuiWindowFlags TitleBarFlags;
+
+	/**
+	 * cs50x
+	 */
+
+	bool bShouldShowcs50x = true;
+	ImVec4 cs50xCrimson = {0.65f, 0.11f, 0.19f, 1.0f};
+	ImVec2 cs50xButtonSize = StandardButtonSize;
+	std::string cs50xButtonText = "cs50x";
+	void cs50xOpening();
+
 	
 private:
 

@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
+# Set CMAKE_TOOLCHAIN_FILE before project()
 set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 
 # Project details
@@ -10,7 +11,6 @@ project(
 )
   
 set(CMAKE_CXX_STANDARD 20)
-set(VCPKG_LIBRARY_LINKAGE static)
   
 # Include CMake files
 include(CMake/StandardSettings.cmake)

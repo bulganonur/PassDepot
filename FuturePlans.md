@@ -49,3 +49,4 @@
 - Users should be able to change their masterpassword
 - Maximized window should zero window rounding
 - Maybe change some of the database queries with DisplayDepot queries
+- Fix clang warnings (this might also resolve window dragging issue on debian)
