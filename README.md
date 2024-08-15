@@ -1,6 +1,6 @@
 # PassDepot
 
-#### Video Demo:  <URL HERE>
+#### Video Demo: [PassDepot Video Demo](https://www.youtube.com/watch?v=Grsy3Staj8U)
 
 ## Project Description
 
