@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.25)
 
-set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+# Set cmake toolchain file for vcpkg
+set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/External/vcpkg/scripts/buildsystems/vcpkg.cmake)
 
 # Project details
 project(
@@ -10,7 +11,6 @@ project(
 )
   
 set(CMAKE_CXX_STANDARD 20)
-set(VCPKG_LIBRARY_LINKAGE static)
   
 # Include CMake files
 include(CMake/StandardSettings.cmake)
@@ -71,7 +71,7 @@ set_project_warnings(${PROJECT_NAME})
 verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}.\n")
 
 #
-# Link with the libraries the project uses
+# Link against libraries
 #
 
 # fmt
@@ -90,7 +90,15 @@ find_package(unofficial-sodium CONFIG REQUIRED)
 find_package(unofficial-sqlite3 CONFIG REQUIRED)
 
 # Link libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt OpenGL::GL glfw unofficial-sodium::sodium unofficial::sqlite3::sqlite3)
+target_link_libraries(
+  ${PROJECT_NAME} 
+  PRIVATE 
+  fmt::fmt 
+  OpenGL::GL 
+  glfw 
+  unofficial-sodium::sodium 
+  unofficial::sqlite3::sqlite3
+)
 
 # For Windows, it is necessary to link with the MultiThreaded library.
 # Depending on how the rest of the project's dependencies are linked, it might be necessary
