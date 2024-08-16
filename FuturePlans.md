@@ -15,7 +15,7 @@
 
     - Key
 
-    - Display Depot
+    - DisplayDepot
     
     - Local/Temporary variables:
         - Plaintext used for decryption
@@ -27,7 +27,7 @@
 
 3. Everything stays encrypted in memory and only decrypt entries at user's will
     - Showing everything encrypted is not user friendly at all. It will be almost impossible for users to distinguish 
-    entries. Title and EntryId should shown as plaintext and the rest can be shown as ciphertext. Also consider 
+    entries. Title and EntryId should be shown as plaintext and the rest can be shown as ciphertext. Also consider 
     performance overhead. With the current setup it may not be possible to decrypt parts of an entry.
 
 4. Encrypt database file -> [read](https://doc.libsodium.org/secret-key_cryptography/secretstream#file-encryption-example-code)
@@ -37,15 +37,16 @@
 - Make table sortable
 - Make theme transparecy adjustable
 - Password generation -> [read](https://doc.libsodium.org/generating_random_data)
+- User should be able to copy entry details (they can in the input fields via FillInDetails, but make it so for the table as well)
 - Let users create additional tables/depots/vaults and or additional databases.
 - Switch to Dear Imgui's stdlib for C++ stl
 - Libsodium padding? -> [read](https://doc.libsodium.org/padding)
 - Salt entry passwords?
-- Encrypt EntryInfo?
+- Encrypt EntryInfo? (find a better way than EntryInfos, a separate nonce table perhaps)
 - A Tips window for the quirks of PassDepot:
     - Holding LShift disables window dragging
 - Store entry/depot creation dates, last modified date in database
 - Implementing tooltips for some items would be nice
 - Users should be able to change their masterpassword
-- Maximized window should zero window rounding
+- Maximized window should zero window rounding (edges look ugly)
 - Maybe change some of the database queries with DisplayDepot queries

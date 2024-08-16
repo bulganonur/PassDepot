@@ -14,9 +14,8 @@ set(CMAKE_CXX_STANDARD 20)
   
 # Include CMake files
 include(CMake/StandardSettings.cmake)
-include(CMake/Utils.cmake)
-include(CMake/SourcesAndHeaders.cmake)
 include(CMake/CompilerWarnings.cmake)
+include(CMake/SourcesAndHeaders.cmake)
   
 # Include Directories
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Include/)
@@ -31,14 +30,6 @@ message(STATUS "Started CMake for ${PROJECT_NAME} v${PROJECT_VERSION}...\n")
 # Prevent building in the source directory
 if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
   message(FATAL_ERROR "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there.\n")
-endif()
-
-# Log source files to console
-if(${PROJECT_NAME}_VERBOSE_OUTPUT)
-  verbose_message("Found the following sources:")
-  foreach(source IN LISTS exe_sources)
-    verbose_message("* ${source}")
-  endforeach()
 endif()
 
 # Create executable
@@ -68,10 +59,10 @@ else()
   target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 endif()
 set_project_warnings(${PROJECT_NAME})
-verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}.\n")
+message(STATUS "Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}.\n")
 
 #
-# Link against libraries
+# Find and link against dependencies
 #
 
 # fmt
@@ -89,7 +80,6 @@ find_package(unofficial-sodium CONFIG REQUIRED)
 # sqlite3
 find_package(unofficial-sqlite3 CONFIG REQUIRED)
 
-# Link libraries
 target_link_libraries(
   ${PROJECT_NAME} 
   PRIVATE 
@@ -112,6 +102,4 @@ target_link_libraries(
 # On Linux and Mac this variable is ignored. If any issues rise from it, try commenting it out
 # and letting CMake decide how to link with it.
 
-verbose_message("Successfully added all dependencies and linked against them.\n")
-
-message(STATUS "Finished building requirements for installing the package.\n")
+message(STATUS "Successfully added all dependencies and linked against them.\n")

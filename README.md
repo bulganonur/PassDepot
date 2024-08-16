@@ -9,8 +9,14 @@ It uses cryptographic tools provided by [libsodium](https://github.com/jedisct1/
 
 For fonts, PassDepot uses [Victor Mono](https://github.com/rubjo/victor-mono).
 
-Currently, PassDepot utilizes libsodium's pwhash* and secretbox* APIs for password hashing and encryption respectively. [Argon2](https://github.com/P-H-C/phc-winner-argon2) is the default algorithm for pwhash* whereas [XSalsa20](https://doc.libsodium.org/advanced/stream_ciphers/xsalsa20) stream cipher for secretbox*.
+Currently, PassDepot utilizes libsodium's pwhash* and secretbox* APIs for password hashing and encryption respectively. 
+[Argon2](https://github.com/P-H-C/phc-winner-argon2) is the default algorithm for pwhash* whereas [XSalsa20](
+https://doc.libsodium.org/advanced/stream_ciphers/xsalsa20) stream cipher for secretbox*.
 
 ## Build
+
+todo: ---
+
+## Showcase / Screenshots
 
 todo: ---
