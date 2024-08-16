@@ -71,7 +71,7 @@ set_project_warnings(${PROJECT_NAME})
 verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}.\n")
 
 #
-# Link with the libraries the project uses
+# Link against libraries
 #
 
 # fmt

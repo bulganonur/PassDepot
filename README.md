@@ -1,6 +1,6 @@
 # PassDepot
 
-#### Video Demo:  <URL HERE>
+#### Video Demo:  [PassDepot Demo](https://www.youtube.com/watch?v=Grsy3Staj8U)
 
 ## Project Description
 
@@ -97,3 +97,17 @@ master passwords. While doing so, it can generate random salt and nonce. This cl
 memory lock but currently this feature is not yet implemented. libsodium's password hashing API pwhash* currently 
 utilizes [Argon2](https://github.com/P-H-C/phc-winner-argon2) algorithm by default and for encryption, [XSalsa20](
 https://doc.libsodium.org/advanced/stream_ciphers/xsalsa20) stream cipher.
+
+## Build
+
+### Requirements
+
+- [CMake](https://cmake.org/)
+- [vcpkg](https://github.com/microsoft/vcpkg)
+
+Once CMake and vcpkg are set, you can build PassDepot:
+
+```
+mkdir build && cd build
+cmake .. && cmake --build .
+```

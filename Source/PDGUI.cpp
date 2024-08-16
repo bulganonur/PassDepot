@@ -61,9 +61,6 @@ void PDGUI::Init()
     // Enable Keyboard Controls
     IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
-    // Enable Gamepad Controls
-    IO.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-
     // Set fonts to VictorMono
     IO.Fonts->AddFontFromFileTTF("VictorMono-SemiBold.ttf", FontSize);
 
