@@ -1,11 +1,14 @@
 # build folder
 [Bb]uild/*
 
-### VisualStudioCode ###
+# VisualStudioCode
 .vscode/*
 
-### VisualStudio ###
+# VisualStudio
 .vs/*
+
+# xmake
+.xmake/*
 
 # Prerequisites
 *.d

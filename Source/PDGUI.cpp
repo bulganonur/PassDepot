@@ -4,11 +4,14 @@
 
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+
+#undef GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <fmt/core.h>
 
 #include <iostream>
 #include <sstream>
+#include <filesystem>
 
 namespace PassDepot
 {
@@ -65,7 +68,7 @@ void PDGUI::Init()
     IO.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
     // Set fonts to VictorMono
-    IO.Fonts->AddFontFromFileTTF("VictorMono-SemiBold.ttf", FontSize);
+    IO.Fonts->AddFontFromFileTTF(FindFonts().c_str(), FontSize);
 
     SetupStyle();
     
@@ -973,6 +976,26 @@ void PDGUI::AlignElementsX(float InElementWidth, float InAlignment, int InElemen
 
     float IndentSize = (MainViewport->Size.x - ElementWidthTotal) * InAlignment;
     ImGui::SetCursorScreenPos(ImVec2{IndentSize, ImGui::GetCursorScreenPos().y});
+}
+
+std::string PDGUI::FindFonts()
+{
+    std::filesystem::path CurrentPath = std::filesystem::current_path();
+    
+    while (!CurrentPath.empty() && CurrentPath != CurrentPath.root_path())
+    {
+        if (std::filesystem::exists(CurrentPath / "VictorMono-SemiBold.ttf"))
+        {
+            return CurrentPath.string().append("/VictorMono-SemiBold.ttf");
+        }
+        
+        // Move up one directory
+        CurrentPath = CurrentPath.parent_path();
+    }
+    
+    std::cerr << "Fonts not found" << std::endl;
+
+    return std::string();
 }
 
 } // namespace PassDepot

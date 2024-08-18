@@ -126,6 +126,9 @@ private:
 	// Uses default Style.ItemSpacing to calculate total item width, so if custom spacing is set for Imgui::Sameline()
 	// alignment will be off
 	void AlignElementsX(float InElementWidth, float InAlignment = 0.5f, int InElementCount = 1, int InRadioButtonCount = 0);
+
+	// Try to find the fonts from the project root directory
+	std::string FindFonts();
 	
 private:
 

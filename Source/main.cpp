@@ -3,7 +3,9 @@
 #include <iostream>
 #include <stdexcept>
 
-#ifdef _WIN32
+// #define PASSDEPOT_NO_CONSOLE
+
+#if defined(_WIN32) && defined(PASSDEPOT_NO_CONSOLE)
 #include <windows.h>
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
