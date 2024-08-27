@@ -60,13 +60,13 @@ private:
 
     // Window Properties
     GLFWwindow* Window;
-    int WindowPositionX;
-    int WindowPositionY;
     int WindowSizeX;
     int WindowSizeY;
+    std::string WindowName;
+    int WindowPositionX;
+    int WindowPositionY;
     int WindowSizeMinX;
     int WindowSizeMinY;
-    std::string WindowName;
     bool bIsWindowMaximized;
 
     int VideoModeWidth;

@@ -145,7 +145,7 @@ void PDGUI::OptionsButton()
     {
         // Select a theme
         ImGui::SeparatorText("Themes");
-        for (int Idx = 0; Idx < Themes.size(); ++Idx)
+        for (size_t Idx = 0; Idx < Themes.size(); ++Idx)
         {
             if (ImGui::MenuItem(Themes[Idx].c_str(), "", Toggles[Idx], !Toggles[Idx]))
             {
@@ -365,7 +365,7 @@ void PDGUI::StatusMessagePopup()
                 SetShouldShowStatusMsg(false);
             }
             ImGui::Spacing();
-            ImGui::TextColored(StatusMessageColor, StatusMessage.c_str());
+            ImGui::TextColored(StatusMessageColor, "%s", StatusMessage.c_str());
             ImGui::Spacing();
         }
         ImGui::End();
@@ -537,7 +537,7 @@ void PDGUI::Depot()
                 ImGui::TextUnformatted(DisplayEntry.Password.c_str());
 
                 ImGui::TableSetColumnIndex(4);
-                ImGui::TextWrapped(DisplayEntry.Notes.c_str());
+                ImGui::TextWrapped("%s", DisplayEntry.Notes.c_str());
             }
             
             if (ImGui::TableGetHoveredColumn() == -1)

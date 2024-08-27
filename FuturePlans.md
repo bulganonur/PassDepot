@@ -3,20 +3,10 @@
 ### Must-Haves
 
 1. Virtual memory lock for anything and everything plaintext
-    - DepotUsername
-    - Masterpassword
-    - MasterpassVerify
-
-    - Title
-    - Username
-    - Password
-    - Notes
-    - UserId
-
+    - DepotUsername, Masterpassword, MasterpassVerify
+    - Title, Username, Password, Notes, UserId
     - Key
-
     - DisplayDepot
-    
     - Local/Temporary variables:
         - Plaintext used for decryption
         - Buffer struct used for making plaintext pretty
@@ -51,3 +41,4 @@
 - Maximized window should zero window rounding (edges look ugly)
 - Maybe change some of the database queries with DisplayDepot queries
 - Fix clang warnings (this might also resolve window dragging issue on debian)
+- Disable window drag when input fields and buttons are hovered(consider disabling window drag completely other than via titlebar)

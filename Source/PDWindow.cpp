@@ -8,8 +8,8 @@ namespace PassDepot
 {
 
 PDWindow::PDWindow(int Width, int Height, std::string Name)
-: WindowSizeX(Width), WindowSizeY(Height), WindowName{Name}, bIsWindowMaximized(false), WindowPositionX(0), WindowPositionY(0), 
-  VideoModeWidth(0), VideoModeHeight(0), WindowSizeMinX(360), WindowSizeMinY(360)
+: WindowSizeX(Width), WindowSizeY(Height), WindowName{Name}, WindowPositionX(0), WindowPositionY(0), WindowSizeMinX(360),
+  WindowSizeMinY(360), bIsWindowMaximized(false), VideoModeWidth(0), VideoModeHeight(0)
 {
     InitWindow();
     CacheVideoModeWidthHeight();

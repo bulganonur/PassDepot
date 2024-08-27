@@ -13,9 +13,16 @@ Currently, PassDepot utilizes libsodium's pwhash* and secretbox* APIs for passwo
 [Argon2](https://github.com/P-H-C/phc-winner-argon2) is the default algorithm for pwhash* whereas [XSalsa20](
 https://doc.libsodium.org/advanced/stream_ciphers/xsalsa20) stream cipher for secretbox*.
 
-## Build
+## Build && Run
 
-todo: ---
+PassDepot uses [xmake](https://github.com/xmake-io/xmake) to handle its dependecies and build. Once you get xmake, run below command in the project directory:
+
+``
+xmake run
+``
+
+This should first prompt you for package installation then build PassDepot and run it.
+
 
 ## Showcase / Screenshots
 
