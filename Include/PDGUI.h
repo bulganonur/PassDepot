@@ -50,45 +50,45 @@ public:
 	PDGUI(PDWindow* InWindow, PDDatabase* InDatabase, PDSecurity* InSecurity);
 	~PDGUI();
 
-	// delete copy ctor and copy assignment operator to prevent copies
+	/** delete copy ctor and copy assignment operator to prevent copies */
 	PDGUI(const PDGUI&) = delete;
 	PDGUI& operator=(const PDGUI&) = delete;
 
 public:
 
-	// ImGui elements should start after this function
+	/** ImGui elements should start after this function */
 	void StartNewFrame();
 
-	// Based on the bIsLoggedIn status, either shows a Login/Register window or the Depot itself
+	/** Based on the bIsLoggedIn status, either shows a Login/Register window or the Depot itself */
 	void MainWindows();
 
-	// ImGui elements should end before this function
+	/** ImGui elements should end before this function */
 	void Render();
 
 private:
 
-	// Initialization, called from the ctor
+	/** Initialization, called from the ctor */
 	void Init();
 
-	// Setup Dear Imgui Style
+	/** Setup Dear Imgui Style */
 	void SetupStyle();
 
-	// Let the user select from one of the available themes
+	/** Let the user select from one of the available themes */ // @todo: include additional options - change comment
 	void OptionsButton();
 
-	// A window used as a custom title bar
+	/** A window used as a custom title bar */
 	void TitleBar();
 
-	// Handles window resizing
+	/** Handles window resizing */
 	void ResizeHandle();
 
-	// Handles window dragging
+	/** Handles window dragging */
 	void WindowDragging();
 
-	// Sets the contents and color of the StatusMessagePopup
+	/** Sets the contents and color of the StatusMessagePopup */
 	void SetupStatusMessage(const std::string& InStatusMessage, bool bIsErrorMessage);
 
-	// Shows status' of various operations, like a pop-up
+	/** Shows status' of various operations, like a pop-up */
 	void StatusMessagePopup();
 
 	void Welcome();
@@ -122,12 +122,14 @@ private:
 	void SwitchThemes();
 	void SeparatorWithNewLines();
 
-	// Aligns a single element or multiple elements concatenated with Imgui::Sameline().
-	// Uses default Style.ItemSpacing to calculate total item width, so if custom spacing is set for Imgui::Sameline()
-	// alignment will be off
+	/**
+	 * Aligns a single element or multiple elements concatenated with Imgui::Sameline().
+	 * Uses default Style.ItemSpacing to calculate total item width, so if custom spacing is set for Imgui::Sameline()
+	 * alignment will be off 
+	 */
 	void AlignElementsX(float InElementWidth, float InAlignment = 0.5f, int InElementCount = 1, int InRadioButtonCount = 0);
 
-	// Try to find the fonts from the project root directory
+	/** Try to find the fonts from the project root directory */
 	std::string FindFonts();
 	
 private:
@@ -136,25 +138,25 @@ private:
 	PDDatabase* Database;
 	PDSecurity* Security;
 
-	// Login/Register buffers
+	/** Login/Register buffers */
 	char DepotUsername[crypto_pwhash_STRBYTES] = {0};
 	char MasterPassword[crypto_pwhash_STRBYTES] = {0};
 	char MasterPassVerify[crypto_pwhash_STRBYTES] = {0};
 
-	// New/Edit/Delete Entry buffers
+	/** New/Edit/Delete Entry buffers */
 	int EntryId = 0;
 	char Title[crypto_pwhash_STRBYTES] = {0};
 	char Username[crypto_pwhash_STRBYTES] = {0};
 	char Password[crypto_pwhash_STRBYTES] = {0};
 	char Notes[crypto_pwhash_STRBYTES * 2] = {0};
 
-	// Depot that holds the display ready entries
+	/** Depot that holds the display ready entries */
 	std::vector<DisplayEntry> DisplayDepot;
 
-	// Message of the status window pop-up
+	/** Message of the status window pop-up */
 	std::string StatusMessage;
 
-	// Mainly used for getting viewport size and position
+	/** Mainly used for getting viewport size and position */
 	ImGuiViewport* MainViewport;
 
 	bool bIsLoggedIn;
@@ -187,7 +189,7 @@ private:
 	
 private:
 
-	// Welcome window radio buttons
+	/** Welcome window radio buttons */
 	enum EWelcomeOperations
 	{
 		EWO_Register, 
@@ -195,7 +197,7 @@ private:
 		EWO_Default
 	};
 
-	// Depot window radio buttons
+	/** Depot window radio buttons */
 	enum EDepotOperations
 	{
 		EDO_NewEntry, 
@@ -205,7 +207,7 @@ private:
 		EDO_Default
 	};
 
-	// Available themes from Dear ImGui
+	/** Available themes from Dear ImGui */
 	enum EPassDepotThemes
 	{
 		EPT_Classic, 

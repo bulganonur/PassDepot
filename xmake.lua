@@ -20,7 +20,7 @@ set_policy("build.optimization.lto", false)
 
 -- Dependencies
 add_requires("fmt", "glfw", "sqlite3", "libsodium")
-add_requires("imgui docking", {configs = {glfw_opengl3 = true}})
+add_requires("imgui docking", {configs = {glfw = true, opengl3 = true}})
 
 -- Executable
 target("PassDepot")

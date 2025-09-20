@@ -42,3 +42,4 @@
 - Maybe change some of the database queries with DisplayDepot queries
 - Fix clang warnings (this might also resolve window dragging issue on debian)
 - Disable window drag when input fields and buttons are hovered(consider disabling window drag completely other than via titlebar)
+- Refactor helper functions
